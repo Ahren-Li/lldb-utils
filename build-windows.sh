@@ -65,7 +65,6 @@ export PATH="$PRE/ninja/windows-x86/":"$PATH"
 
 BUILD="$ROOT_DIR/$OUT/lldb/host"
 rm -rf "$BUILD"
-rm -rf "$DIST"
 mkdir -p "$BUILD"
 cd "$BUILD"
 INSTALL=$ROOT_DIR/$OUT/lldb/install
@@ -89,6 +88,6 @@ $PRE/ninja/windows-x86/ninja install
 #cd $ROOT_DIR/external/lldb/test
 #./dosep.py -o "-m --executable $BUILD/bin/lldb -s $BUILD/traces"
 
-mkdir -p "$ROOT_DIR/$DIST"
+mkdir -p $DIST
 # zip file is 5.5GB, need to prune
-#(cd $INSTALL && zip -r - ".") > "$ROOT_DIR/$DIST/lldb-windows-$BNUM.zip"
+#(cd $INSTALL && zip -r - ".") > "$DIST/lldb-windows-$BNUM.zip"

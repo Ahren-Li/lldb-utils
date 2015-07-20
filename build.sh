@@ -67,7 +67,6 @@ export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 export PATH="$PRE/ninja/linux-x86:$PATH"
 BUILD="$ROOT_DIR/$OUT/lldb/host"
 rm -rf "$BUILD"
-rm -rf "$DIST"
 mkdir -p "$BUILD"
 cd "$BUILD"
 LLDB_FLAGS="-fuse-ld=gold -target x86_64-unknown-linux"
@@ -105,7 +104,7 @@ cp -r ../../../external/lldb/include/lldb/API/ $INSTALL/include/LLDB
 cd $ROOT_DIR/external/lldb/test
 ./dosep.py -o "-m --executable $INSTALL/bin/lldb -s $BUILD/traces"
 
-mkdir -p "$ROOT_DIR/$DIST"
+mkdir -p $DIST
 # zip file is 5.5GB, need to prune
-(cd $INSTALL && zip --symlinks -r - ".") > "$ROOT_DIR/$DIST/lldb-linux-$BNUM.zip"
+(cd $INSTALL && zip --symlinks -r - ".") > "$DIST/lldb-linux-$BNUM.zip"
 

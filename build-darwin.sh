@@ -55,7 +55,6 @@ ln -s ../llvm external/lldb || true
 
 BUILD="$ROOT_DIR/$OUT/lldb/host"
 rm -rf "$BUILD"
-rm -rf "$DIST"
 mkdir -p "$BUILD"
 
 export SWIG_LIB=$PRE/swig/darwin-x86/share/swig/2.0.11/
@@ -70,10 +69,10 @@ xcodebuild -configuration $CONFIG -target desktop OBJROOT="$BUILD" SYMROOT="$BUI
 cd $ROOT_DIR/external/lldb/test
 ./dosep.py -o "-m --executable $BUILD/$CONFIG/lldb -s $BUILD/traces"
 
-mkdir -p "$ROOT_DIR/$DIST/"
+mkdir -p $DIST
 # zip file is huge, need to prune
 find $BUILD/$CONFIG/LLDB.framework/ -name Clang -type d | xargs rm -rf
 find $BUILD/$CONFIG/LLDB.framework/ -name debugserver | xargs rm
 find $BUILD/$CONFIG/LLDB.framework/ -name lldb-server | xargs rm
 
-(cd $BUILD/$CONFIG/ && zip -r --symlinks - lldb LLDB.framework) > "$ROOT_DIR/$DIST/lldb-mac-$BNUM.zip"
+(cd $BUILD/$CONFIG/ && zip -r --symlinks - lldb LLDB.framework) > "$DIST/lldb-mac-$BNUM.zip"
