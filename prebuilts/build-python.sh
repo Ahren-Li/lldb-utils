@@ -34,7 +34,7 @@ linux|darwin)
     # can't get prebuilt clang working https://b/22748915
 	mkdir $RD/build
 	cd $RD/build
-	$RD/$BASE/configure --prefix=$INSTALL --enable-shared
+	$RD/$BASE/configure --prefix=$INSTALL --enable-unicode=ucs4 --enable-shared
 	make -j$CORES
 	make install
 	;;
