@@ -1,21 +1,17 @@
-#!/bin/bash -x
+#!/bin/bash
 # Expected arguments:
 # $1 = out_dir
-# $2 = dist_dir
+# $2 = dest_dir
 # $3 = build_number
 
 # exit on error
 set -e
 
-# OSX lacks a "realpath" bash command
-realpath() {
-    [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
-}
-
 # calculate the root directory from the script path
 # this script lives two directories down from the root
-# external/lldb-utils/build.sh
-ROOT_DIR="$(dirname "$(dirname "$(dirname "$(realpath "$0")")")")"
+# external/lldb-utils/build-darwin.sh
+ROOT_DIR="$(readlink -f "$(dirname "$0")/../..")"
+cd "$ROOT_DIR"
 
 function die() {
   echo "$*" > /dev/stderr
@@ -23,56 +19,48 @@ function die() {
   exit 1
 }
 
-while [[ -n "$1" ]]; do
-  if [[ -z "$OUT" ]]; then
-    OUT="$1"
-  elif [[ -z "$DIST" ]]; then
-    DIST="$1"
-  elif [[ -z "$BNUM" ]]; then
-    BNUM="$1"
-  else
-    die "[$0] Unknown parameter: $1"
-  fi
-  shift
-done
+(($# > 3)) && die "[$0] Unknown parameter: $4"
 
-if [[ -z "$OUT" ]]; then die "## Error: Missing out folder"; fi
-if [[ -z "$DIST" ]]; then die "## Error: Missing destination folder"; fi
-if [[ -z "$BNUM" ]]; then die "## Error: Missing build number"; fi
+OUT="$1"
+DEST="$2"
+BNUM="$3"
 
-cd "$ROOT_DIR"
+[ ! "$OUT"  ] && die "## Error: Missing out folder"
+[ ! "$DEST" ] && die "## Error: Missing destination folder"
+[ ! "$BNUM" ] && die "## Error: Missing build number"
 
-mkdir -p "$OUT"
+OUT="$(readlink -f "$OUT")"
+DEST="$(readlink -f "$DEST")"
 
-echo "## Building android-studio ##"
-echo "## Dest dir : $DIST"
-echo "## Qualifier: $QUAL"
-echo "## Build Num: $BNUM"
-echo
+cat <<END_INFO
+## Building android-studio ##
+## Out Dir  : $OUT
+## Dest Dir : $DEST
+## Build Num: $BNUM
 
-ln -s ../../clang external/llvm/tools || true
-ln -s ../llvm external/lldb || true
+END_INFO
 
-BUILD="$ROOT_DIR/$OUT/lldb/host"
+LLVM="$ROOT_DIR/external/llvm"
+LLDB="$ROOT_DIR/external/lldb"
+
+ln -fns ../../clang "$LLVM/tools/clang"
+ln -fns ../llvm "$LLDB/llvm"
+
+PRE="$ROOT_DIR/prebuilts"
+
+export PATH="$PRE/swig/darwin-x86/bin:/usr/bin:/bin"
+export SWIG_LIB="$PRE/swig/darwin-x86/share/swig/2.0.11"
+
+CONFIG=Release
+
+BUILD="$OUT/lldb/host"
 rm -rf "$BUILD"
 mkdir -p "$BUILD"
 
-export SWIG_LIB=$PRE/swig/darwin-x86/share/swig/2.0.11/
+(cd "$LLDB" && xcodebuild -configuration $CONFIG -target desktop OBJROOT="$BUILD" SYMROOT="$BUILD")
 
-CONFIG=Release
-PRE="$ROOT_DIR/prebuilts"
-export PATH="$PRE/swig/darwin-x86/bin:$PATH"
-export SWIG_LIB=$PRE/swig/darwin-x86/share/swig/2.0.11/
-cd $ROOT_DIR/external/lldb
-xcodebuild -configuration $CONFIG -target desktop OBJROOT="$BUILD" SYMROOT="$BUILD"
-
-cd $ROOT_DIR/external/lldb/test
-./dosep.py -o "-m --executable $BUILD/$CONFIG/lldb -s $BUILD/traces"
-
-mkdir -p $DIST
 # zip file is huge, need to prune
-find $BUILD/$CONFIG/LLDB.framework/ -name Clang -type d | xargs rm -rf
-find $BUILD/$CONFIG/LLDB.framework/ -name debugserver | xargs rm
-find $BUILD/$CONFIG/LLDB.framework/ -name lldb-server | xargs rm
+find "$BUILD/$CONFIG/LLDB.framework" -name Clang -or -name debugserver -or -name lldb-server -exec rm -rf {} +
 
-(cd $BUILD/$CONFIG/ && zip -r --symlinks - lldb LLDB.framework) > "$DIST/lldb-mac-$BNUM.zip"
+mkdir -p "$DEST"
+(cd "$BUILD/$CONFIG" && zip -r --symlinks "$DEST/lldb-mac-${BNUM}.zip" lldb LLDB.framework)
