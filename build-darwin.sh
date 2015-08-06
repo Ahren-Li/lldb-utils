@@ -48,7 +48,7 @@ ln -fns ../llvm "$LLDB/llvm"
 
 PRE="$ROOT_DIR/prebuilts"
 
-export PATH="$PRE/swig/darwin-x86/bin:/usr/bin:/bin"
+export PATH="$PRE/swig/darwin-x86/bin:/usr/sbin:/usr/bin:/bin"
 export SWIG_LIB="$PRE/swig/darwin-x86/share/swig/2.0.11"
 
 CONFIG=Release
