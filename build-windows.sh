@@ -79,9 +79,17 @@ CMD+=(cmd /c 'C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.b
 CMD+=('&&' cd "$BUILD")
 CMD+=('&&' "$CMAKE" "${CMAKE_OPTIONS[@]}")
 CMD+=('&&' "$NINJA" lldb finish_swig)
-CMD+=('&&' "$NINJA" install)
+
+# Too large and missing site-packages - http://llvm.org/pr24378
+#CMD+=('&&' "$NINJA" install)
 
 PATH="$(cygpath -up "$(dirname "$NINJA")"';C:\Windows\system32')" "${CMD[@]}"
+
+mkdir -p "$INSTALL"'\bin' "$INSTALL"'\lib' "$INSTALL"'\include\lldb'
+cp -a "$BUILD"'\bin\'{lldb.exe,liblldb.dll}        "$INSTALL"'\bin\'
+cp -a "$PRE"'\python\windows-x86\x86\python27.dll' "$INSTALL"'\bin\'
+cp -a "$BUILD"'\lib\'{liblldb.lib,site-packages}   "$INSTALL"'\lib\'
+cp -a "$LLDB"'\include\lldb\API'                   "$INSTALL"'\include\lldb\'
 
 mkdir -p "$DEST"
 (cd "$INSTALL" && zip -r "$DEST"'\'lldb-windows-${BNUM}.zip .)
