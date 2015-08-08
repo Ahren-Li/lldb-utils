@@ -62,10 +62,23 @@ BUILD="$OUT/lldb/host"
 rm -rf "$BUILD"
 mkdir -p "$BUILD"
 
-(cd "$LLDB" && xcodebuild -configuration $CONFIG -target desktop OBJROOT="$BUILD" SYMROOT="$BUILD")
+unset XCODEBUILD_OPTIONS
+unset PRUNE
+
+XCODEBUILD_OPTIONS+=(-configuration $CONFIG)
+XCODEBUILD_OPTIONS+=(-target desktop)
+XCODEBUILD_OPTIONS+=(OBJROOT="$BUILD")
+XCODEBUILD_OPTIONS+=(SYMROOT="$BUILD")
+
+(cd "$LLDB" && xcodebuild "${XCODEBUILD_OPTIONS[@]}")
+
+PRUNE+=('(' -name Clang -and -type d ')')
+PRUNE+=( -or -name argdumper)
+PRUNE+=( -or -name darwin-debug)
+PRUNE+=( -or -name lldb-server)
 
 # zip file is huge, need to prune
-find "$BUILD/$CONFIG/LLDB.framework" -name Clang -or -name debugserver -or -name lldb-server -exec rm -rf {} +
+find "$BUILD/$CONFIG/LLDB.framework" '(' "${PRUNE[@]}" ')' -exec rm -rf {} +
 
 mkdir -p "$DEST"
 (cd "$BUILD/$CONFIG" && zip -r --symlinks "$DEST/lldb-mac-${BNUM}.zip" lldb LLDB.framework)
