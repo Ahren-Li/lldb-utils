@@ -1,10 +1,10 @@
 #!/bin/bash -ex
-# latest version of this file can be found at 
+# latest version of this file can be found at
 # https://android.googlesource.com/platform/external/lldb-utils
 #
-# Download & build swig on the local machine
+# Download & build python on the local machine
 # works on Linux, OSX, and Windows (Cygwin)
-# leaves output in /tmp/prebuilts/install/
+# leaves output in /tmp/prebuilts/python/$OS-x86
 
 PROJ=python
 VER=2.7.10

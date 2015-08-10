@@ -1,5 +1,5 @@
 #!/bin/bash -ex
-# latest version of this file can be found at 
+# latest version of this file can be found at
 # https://android.googlesource.com/platform/external/lldb-utils
 #
 # Download & build ninja on the local machine

@@ -1,4 +1,4 @@
-# latest version of this file can be found at 
+# latest version of this file can be found at
 # https://android.googlesource.com/platform/external/lldb-utils
 #
 # inputs
@@ -9,18 +9,16 @@
 # this file does the following:
 #
 # 1) define the following env vars
-# OS - linux|darwin|windows
-# USER - username
-# CORES - numer of cores (for parallel builds)
-# PATH (with appropriate compilers)
-# CFLAGS/CXXFLAGS/LDFLAGS
-# RD - root directory for source and object files
-# INSTALL - install directory/git repo root
-# SCRIPT_FILE=absolute path to the parent build script
-# SCRIPT_DIR=absolute path to the parent build script's directory
-# COMMON_FILE=absolute path to this file
-
-#
+#    OS - linux|darwin|windows
+#    USER - username
+#    CORES - numer of cores (for parallel builds)
+#    PATH (with appropriate compilers)
+#    CFLAGS/CXXFLAGS/LDFLAGS
+#    RD - root directory for source and object files
+#    INSTALL - install directory/git repo root
+#    SCRIPT_FILE=absolute path to the parent build script
+#    SCRIPT_DIR=absolute path to the parent build script's directory
+#    COMMON_FILE=absolute path to this file
 # 2) create an empty tmp directory at /tmp/$PROJ-$USER
 # 3) checkout the destination git repo to /tmp/prebuilts/$PROJ/$OS-x86/$VER
 # 4) cd $RD

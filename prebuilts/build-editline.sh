@@ -1,10 +1,10 @@
 #!/bin/bash -ex
-# latest version of this file can be found at 
+# latest version of this file can be found at
 # https://android.googlesource.com/platform/external/lldb-utils
 #
-# Download & build swig on the local machine
+# Download & build libedit on the local machine
 # works on Linux, OSX, and Windows (Cygwin)
-# leaves output in /tmp/prebuilts/install/
+# leaves output in /tmp/prebuilts/libedit/$OX-x86
 # cmake must be installed on Windows
 
 PROJ=libedit

@@ -1,10 +1,10 @@
 #!/bin/bash -ex
-# latest version of this file can be found at 
+# latest version of this file can be found at
 # https://android.googlesource.com/platform/external/lldb-utils
 #
 # Download & build cmake on the local machine
 # works on Linux, OSX, and Windows (Git Bash)
-# leaves output in /tmp/cmake-build/install/
+# leaves output in /tmp/prebuilts/cmake/$OS-x86
 # cmake must be installed on Windows
 
 PROJ=cmake

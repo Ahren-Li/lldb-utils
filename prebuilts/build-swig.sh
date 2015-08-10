@@ -1,10 +1,10 @@
 #!/bin/bash -ex
-# latest version of this file can be found at 
+# latest version of this file can be found at
 # https://android.googlesource.com/platform/external/lldb-utils
 #
 # Download & build swig on the local machine
 # works on Linux, OSX, and Windows (Cygwin w/make 4.1, curl, gcc 4.9.2)
-# leaves output in /tmp/prebuilts/install/
+# leaves output in /tmp/prebuilts/swig/$OS-x86
 # cmake must be installed on Windows
 
 PROJ=swig
