@@ -7,10 +7,15 @@
 # exit on error
 set -e
 
+# OS X lacks a "realpath" bash command
+realpath() {
+    [[ "$1" == /* ]] && echo "$1" || echo "$PWD/$1"
+}
+
 # calculate the root directory from the script path
 # this script lives two directories down from the root
 # external/lldb-utils/build-darwin.sh
-ROOT_DIR="$(readlink -f "$(dirname "$0")/../..")"
+ROOT_DIR="$(realpath "$(dirname "$0")/../..")"
 cd "$ROOT_DIR"
 
 function die() {
@@ -29,8 +34,8 @@ BNUM="$3"
 [ ! "$DEST" ] && die "## Error: Missing destination folder"
 [ ! "$BNUM" ] && die "## Error: Missing build number"
 
-OUT="$(readlink -f "$OUT")"
-DEST="$(readlink -f "$DEST")"
+OUT="$(realpath "$OUT")"
+DEST="$(realpath "$DEST")"
 
 cat <<END_INFO
 ## Building android-studio ##
