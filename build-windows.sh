@@ -70,12 +70,12 @@ CMAKE_OPTIONS+=(-DSWIG_DIR="$PRE"'\swig\windows-x86')
 CMAKE_OPTIONS+=(-DSWIG_EXECUTABLE="$PRE"'\swig\windows-x86\bin\swig.exe')
 CMAKE_OPTIONS+=(-DPYTHON_HOME="$PRE"'\python\windows-x86\x86')
 CMAKE_OPTIONS+=(-DLLVM_TARGETS_TO_BUILD="ARM;X86;AArch64;Mips")
-CMAKE_OPTIONS+=(-DCMAKE_INSTALL_PREFIX="$INSTALL")
+CMAKE_OPTIONS+=(-DCMAKE_INSTALL_PREFIX="$INSTALL"'\host')
 CMAKE_OPTIONS+=(-DLLVM_EXTERNAL_LLDB_SOURCE_DIR="$LLDB")
 CMAKE_OPTIONS+=(-DLLVM_EXTERNAL_CLANG_SOURCE_DIR="$CLANG")
 
 unset CMD
-CMD+=(cmd /c 'C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat')
+CMD+=(cmd /c "${VS120COMNTOOLS}VsDevCmd.bat")
 CMD+=('&&' cd "$BUILD")
 CMD+=('&&' "$CMAKE" "${CMAKE_OPTIONS[@]}")
 CMD+=('&&' "$NINJA" lldb finish_swig)
@@ -85,11 +85,13 @@ CMD+=('&&' "$NINJA" lldb finish_swig)
 
 PATH="$(cygpath -up "$(dirname "$NINJA")"';C:\Windows\system32')" "${CMD[@]}"
 
-mkdir -p "$INSTALL"'\bin' "$INSTALL"'\lib' "$INSTALL"'\include\lldb'
-cp -a "$BUILD"'\bin\'{lldb.exe,liblldb.dll}        "$INSTALL"'\bin\'
-cp -a "$PRE"'\python\windows-x86\x86\python27.dll' "$INSTALL"'\bin\'
-cp -a "$BUILD"'\lib\'{liblldb.lib,site-packages}   "$INSTALL"'\lib\'
-cp -a "$LLDB"'\include\lldb\API'                   "$INSTALL"'\include\lldb\'
+mkdir -p "$INSTALL/host/bin" "$INSTALL/host/lib" "$INSTALL/host/include/lldb"
+cp -a "$BUILD/bin/"{lldb.exe,liblldb.dll}         "$INSTALL/host/bin/"
+cp -a "$PRE/python/windows-x86/x86/python27.dll"  "$INSTALL/host/bin/"
+cp -a "$BUILD/lib/"{liblldb.lib,site-packages}    "$INSTALL/host/lib/"
+cp -a "$LLDB/include/lldb/"{API,Utility,lldb-*.h} "$INSTALL/host/include/lldb/"
+
+find "$INSTALL/host/include/lldb" -name 'lldb-private*.h' -exec rm {} +
 
 mkdir -p "$DEST"
-(cd "$INSTALL" && zip -r "$DEST"'\'lldb-windows-${BNUM}.zip .)
+(cd "$INSTALL/host" && zip -r "$DEST/lldb-windows-${BNUM}.zip" .)

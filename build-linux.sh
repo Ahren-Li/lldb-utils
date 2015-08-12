@@ -117,7 +117,9 @@ cp -a "$BUILD/lib/"{liblldb.so*,python2.7,readline.so} "$INSTALL/host/lib/"
 cp -a "$PRE/libedit/linux-x86/lib/"libedit.so*         "$INSTALL/host/lib/"
 cp -a "$PRE/python/linux-x86/lib/"libpython2.7.so*     "$INSTALL/host/lib/"
 cp -a "$TOOLCHAIN/sysroot/usr/lib/"libtinfo.so*        "$INSTALL/host/lib/"
-cp -a "$LLDB/include/lldb/API"                         "$INSTALL/host/include/lldb/"
+cp -a "$LLDB/include/lldb/"{API,Utility,lldb-*.h}      "$INSTALL/host/include/lldb/"
+
+find "$INSTALL/host/include/lldb" -name 'lldb-private*.h' -exec rm {} +
 
 #########################
 ##### Android build #####

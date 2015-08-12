@@ -56,6 +56,9 @@ PRE="$ROOT_DIR/prebuilts"
 export PATH="$PRE/swig/darwin-x86/bin:/usr/sbin:/usr/bin:/bin"
 export SWIG_LIB="$PRE/swig/darwin-x86/share/swig/2.0.11"
 
+INSTALL="$OUT/lldb/install"
+rm -rf "$INSTALL"
+
 CONFIG=Release
 
 BUILD="$OUT/lldb/host"
@@ -72,13 +75,19 @@ XCODEBUILD_OPTIONS+=(SYMROOT="$BUILD")
 
 (cd "$LLDB" && xcodebuild "${XCODEBUILD_OPTIONS[@]}")
 
+mkdir -p "$INSTALL/host" "$INSTALL/host/include/lldb"
+cp -a "$BUILD/$CONFIG/"{lldb,LLDB.framework}      "$INSTALL/host/"
+cp -a "$LLDB/include/lldb/"{API,Utility,lldb-*.h} "$INSTALL/host/include/lldb/"
+
+find "$INSTALL/host/include/lldb" -name 'lldb-private*.h' -exec rm {} +
+
 PRUNE+=('(' -name Clang -and -type d ')')
 PRUNE+=( -or -name argdumper)
 PRUNE+=( -or -name darwin-debug)
 PRUNE+=( -or -name lldb-server)
 
 # zip file is huge, need to prune
-find "$BUILD/$CONFIG/LLDB.framework" '(' "${PRUNE[@]}" ')' -exec rm -rf {} +
+find "$INSTALL/host/LLDB.framework" '(' "${PRUNE[@]}" ')' -exec rm -rf {} +
 
 mkdir -p "$DEST"
-(cd "$BUILD/$CONFIG" && zip -r --symlinks "$DEST/lldb-mac-${BNUM}.zip" lldb LLDB.framework)
+(cd "$INSTALL/host" && zip -r --symlinks "$DEST/lldb-mac-${BNUM}.zip" .)
