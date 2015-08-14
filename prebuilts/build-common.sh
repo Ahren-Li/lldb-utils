@@ -24,14 +24,13 @@
 # 4) cd $RD
 
 UNAME="$(uname)"
+SCRATCH=/tmp
 case "$UNAME" in
 Linux)
-    SCRATCH=/tmp
     OS='linux'
     INSTALL_VER=$VER
     ;;
 Darwin)
-    SCRATCH=/tmp
     OS='darwin'
     OSX_MIN=10.6
     export CFLAGS="$CFLAGS -mmacosx-version-min=$OSX_MIN"
@@ -40,13 +39,6 @@ Darwin)
     INSTALL_VER=$VER
     ;;
 *_NT-*)
-    if [[ "$UNAME" == CYGWIN_NT-* ]]; then
-        PATH_PREFIX=/cygdrive
-    else
-        # MINGW32_NT-*
-        PATH_PREFIX=
-    fi
-    SCRATCH=$PATH_PREFIX/d/src/tmp
     USER=$USERNAME
     OS='windows'
     CORES=$NUMBER_OF_PROCESSORS
