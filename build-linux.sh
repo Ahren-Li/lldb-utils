@@ -50,7 +50,7 @@ PRE="$ROOT_DIR/prebuilts"
 CMAKE="$PRE/cmake/linux-x86/bin/cmake"
 NINJA="$PRE/ninja/linux-x86/ninja"
 
-export PATH="$(dirname "$NINJA"):/usr/bin:/bin"
+export PATH="/usr/bin:/bin"
 export SWIG_LIB="$PRE/swig/linux-x86/share/swig/2.0.11"
 
 INSTALL="$OUT/lldb/install"
@@ -91,6 +91,7 @@ LLDB_FLAGS+=(-L"$PRE/libedit/linux-x86/lib")
 CMAKE_OPTIONS+=(-GNinja)
 CMAKE_OPTIONS+=("$LLVM")
 CMAKE_OPTIONS+=(-Wno-dev)
+CMAKE_OPTIONS+=(-DCMAKE_MAKE_PROGRAM="$NINJA")
 CMAKE_OPTIONS+=(-DCMAKE_BUILD_TYPE=$CONFIG)
 CMAKE_OPTIONS+=(-DCMAKE_C_COMPILER="$CLANG")
 CMAKE_OPTIONS+=(-DCMAKE_CXX_COMPILER="$CLANG++")

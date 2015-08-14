@@ -65,6 +65,7 @@ mkdir -p "$BUILD"
 unset CMAKE_OPTIONS
 CMAKE_OPTIONS+=(-GNinja)
 CMAKE_OPTIONS+=("$LLVM")
+CMAKE_OPTIONS+=(-DCMAKE_MAKE_PROGRAM="$NINJA")
 CMAKE_OPTIONS+=(-DCMAKE_BUILD_TYPE=$CONFIG)
 CMAKE_OPTIONS+=(-DSWIG_DIR="$PRE"'\swig\windows-x86')
 CMAKE_OPTIONS+=(-DSWIG_EXECUTABLE="$PRE"'\swig\windows-x86\bin\swig.exe')
@@ -83,7 +84,7 @@ CMD+=('&&' "$NINJA" lldb finish_swig)
 # Too large and missing site-packages - http://llvm.org/pr24378
 #CMD+=('&&' "$NINJA" install)
 
-PATH="$(cygpath -up "$(dirname "$NINJA")"';C:\Windows\system32')" "${CMD[@]}"
+PATH="$(cygpath -up 'C:\Windows\system32')" "${CMD[@]}"
 
 mkdir -p "$INSTALL/host/bin" "$INSTALL/host/lib" "$INSTALL/host/include/lldb"
 cp -a "$BUILD/bin/"{lldb.exe,liblldb.dll}         "$INSTALL/host/bin/"
