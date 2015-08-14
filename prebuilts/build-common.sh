@@ -1,5 +1,5 @@
 # latest version of this file can be found at
-# https://android.googlesource.com/platform/external/lldb-utils
+# sso://googleplex-android/platform/external/lldb-utils
 #
 # inputs
 # $PROJ - project name (cmake|ninja|swig)
@@ -96,7 +96,7 @@ linux)
     export CXXFLAGS="$CFLAGS -Ix86_64-linux/include/c++/4.8 -Ix86_64-linux/include/x86_64-linux/c++/4.8"
     export LDFLAGS="$LDFLAGS -m64 --sysroot $GCC_DIR/sysroot -L$GCC_LIB -L$GCC_LIB2"
     # lldb uses at least one function from glibc2.12
-    git clone https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.15-4.8 $GCC_DIR
+    git clone sso://googleplex-android/platform/prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.15-4.8 $GCC_DIR
     ;;
 esac
 
@@ -106,7 +106,7 @@ commit_and_push()
     rm -rf $SCRATCH/prebuilts/$PROJ/
     mkdir -p $SCRATCH/prebuilts/$PROJ/
     cd $SCRATCH/prebuilts/$PROJ/
-    git clone https://android.googlesource.com/platform/prebuilts/$PROJ/$OS-x86
+    git clone sso://googleplex-android/platform/prebuilts/$PROJ/$OS-x86
     GIT_REPO="$SCRATCH/prebuilts/$PROJ/$OS-x86"
     cd $GIT_REPO
     git rm -r * || true  # ignore error caused by empty directory
