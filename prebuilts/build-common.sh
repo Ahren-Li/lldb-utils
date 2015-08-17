@@ -44,10 +44,9 @@ Darwin)
     # VS2013 x64 Native Tools Command Prompt
     case "$MSVS" in
     2013)
-        export PATH="$PATH_PREFIX/c/Program Files (x86)/Microsoft Visual Studio 12.0/VC/bin/amd64/":"$PATH_PREFIX/c/Program Files (x86)/Microsoft Visual Studio 12.0/Common7/IDE/":"$PATH"
-        export INCLUDE="C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\VC\\INCLUDE;C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\VC\\ATLMFC\\INCLUDE;C:\\Program Files (x86)\\Windows Kits\\8.1\\include\\shared;C:\\Program Files (x86)\\Windows Kits\\8.1\\include\\um;C:\\Program Files (x86)\\Windows Kits\\8.1\\include\\winrt;"
-        export LIB="C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\VC\\LIB\\amd64;C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\VC\\ATLMFC\\LIB\\amd64;C:\\Program Files (x86)\\Windows Kits\\8.1\\lib\\winv6.3\\um\\x64;"
-        export LIBPATH="C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319;C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\VC\\LIB\\amd64;C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\VC\\ATLMFC\\LIB\\amd64;C:\\Program Files (x86)\\Windows Kits\\8.1\\References\\CommonConfiguration\\Neutral;C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v8.1\\ExtensionSDKs\\Microsoft.VCLibs\\12.0\\References\\CommonConfiguration\\neutral;"
+        devenv() {
+            cmd /c "${VS120COMNTOOLS}VsDevCmd.bat" '&' devenv.com "$@"
+        }
         INSTALL_VER=${VER}_${MSVS}
         ;;
     *)

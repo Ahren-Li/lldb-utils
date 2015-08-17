@@ -21,12 +21,12 @@ cd $BASE
 case "$OS" in
 windows)
 	cp PC/pyconfig.h Include
-	devenv.com PCbuild/pcbuild.sln /Upgrade
+	devenv PCbuild/pcbuild.sln /Upgrade
 	# some projects will fail and that's okay
-    devenv.com PCbuild/pcbuild.sln /Build Debug /Out log.txt || egrep -c "========== Build: 18 succeeded, 7 failed, 0 up-to-date, 1 skipped ==========" log.txt
-    devenv.com PCbuild/pcbuild.sln /Build Release /Out log.txt || egrep -c "========== Build: 17 succeeded, 7 failed, 1 up-to-date, 1 skipped ==========" log.txt
-	devenv.com PCbuild/pcbuild.sln /Build "Release|x64" /Out log.txt || egrep -c "========== Build: 16 succeeded, 7 failed, 2 up-to-date, 1 skipped ==========" log.txt
-	devenv.com PCbuild/pcbuild.sln /Build "Debug|x64" /Out log.txt || egrep -c "========== Build: 16 succeeded, 7 failed, 2 up-to-date, 1 skipped ==========" log.txt
+	devenv PCbuild/pcbuild.sln /Build Debug /Out log.txt || egrep -c "========== Build: 18 succeeded, 7 failed, 0 up-to-date, 1 skipped ==========" log.txt
+	devenv PCbuild/pcbuild.sln /Build Release /Out log.txt || egrep -c "========== Build: 17 succeeded, 7 failed, 1 up-to-date, 1 skipped ==========" log.txt
+	devenv PCbuild/pcbuild.sln /Build "Release|x64" /Out log.txt || egrep -c "========== Build: 16 succeeded, 7 failed, 2 up-to-date, 1 skipped ==========" log.txt
+	devenv PCbuild/pcbuild.sln /Build "Debug|x64" /Out log.txt || egrep -c "========== Build: 16 succeeded, 7 failed, 2 up-to-date, 1 skipped ==========" log.txt
 	curl -L http://llvm.org/svn/llvm-project/lldb/trunk/scripts/install_custom_python.py -o install_custom_python.py
 	python install_custom_python.py --source "$(cygpath -w $RD/Python-$VER)" --dest "$(cygpath -w $INSTALL)" --overwrite --silent
 	;;
