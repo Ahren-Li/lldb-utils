@@ -32,10 +32,9 @@ Linux)
     ;;
 Darwin)
     OS='darwin'
-    OSX_MIN=10.6
+    OSX_MIN=10.8
     export CFLAGS="$CFLAGS -mmacosx-version-min=$OSX_MIN"
-    export CXXFLAGS="$CXXFLAGS -mmacosx-version-min=$OSX_MIN"
-    export LDFLAGS="$LDFLAGS -mmacosx-version-min=$OSX_MIN"
+    export CXXFLAGS="$CXXFLAGS -mmacosx-version-min=$OSX_MIN -stdlib=libc++"
     INSTALL_VER=$VER
     ;;
 *_NT-*)
