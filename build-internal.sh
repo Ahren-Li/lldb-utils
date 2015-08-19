@@ -52,11 +52,6 @@ esac
 
 NINJA="$PRE/ninja/$OS-x86/ninja"
 CMAKE="$PRE/cmake/$OS-x86/bin/cmake"
-if [ $OS != windows ]; then
-	#TODO: get these working on Windows
-	CMAKE_OPTIONS+=(-DLIBGLOG_DIR="$PRE/libglog/$OS-x86/lib")
-	CMAKE_OPTIONS+=(-DLIBPROTOBUF_DIR="$PRE/libprotobuf/$OS-x86/lib")
-fi
 
 case $OS in
 	darwin) CMAKE_OPTIONS+=(-DLIBLLDB_DIR="$INSTALL/host");;
@@ -77,9 +72,6 @@ case $OS in
 		CMD+=('&&' "$CMAKE" "${CMAKE_OPTIONS[@]}")
 		CMD+=('&&' "$NINJA" install)
 		PATH="$(cygpath -up 'C:\Windows\system32')" "${CMD[@]}"
-
-		#TODO: get rid of this...
-		cp -a "$GOOGLE/android-ndk/bin/lldb/win/bin/libglog.dll" "$INSTALL/frontend/bin/"
 		;;
 	*)
 		(cd "$BUILD" && "$CMAKE" "${CMAKE_OPTIONS[@]}")
