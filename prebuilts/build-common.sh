@@ -2,7 +2,7 @@
 # sso://googleplex-android/platform/external/lldb-utils
 #
 # inputs
-# $PROJ - project name (cmake|ninja|swig)
+# $PROJ - project name
 # $VER - project version
 # $1 - name of this file
 #
@@ -16,15 +16,16 @@
 #    CFLAGS/CXXFLAGS/LDFLAGS
 #    RD - root directory for source and object files
 #    INSTALL - install directory/git repo root
-#    SCRIPT_FILE=absolute path to the parent build script
-#    SCRIPT_DIR=absolute path to the parent build script's directory
-#    COMMON_FILE=absolute path to this file
+#    SCRIPT_FILE - absolute path to the parent build script
+#    SCRIPT_DIR - absolute path to the parent build script's directory
+#    COMMON_FILE - absolute path to this file
 # 2) create an empty tmp directory at /tmp/$PROJ-$USER
 # 3) checkout the destination git repo to /tmp/prebuilts/$PROJ/$OS-x86/$VER
 # 4) cd $RD
 
 UNAME="$(uname)"
 SCRATCH=/tmp
+UPSTREAM=sso://googleplex-android/platform/prebuilts
 case "$UNAME" in
 Linux)
     OS='linux'
@@ -33,8 +34,11 @@ Linux)
 Darwin)
     OS='darwin'
     OSX_MIN=10.8
+    export CC=clang
+    export CXX=$CC++
     export CFLAGS="$CFLAGS -mmacosx-version-min=$OSX_MIN"
     export CXXFLAGS="$CXXFLAGS -mmacosx-version-min=$OSX_MIN -stdlib=libc++"
+    export LDFLAGS="$LDFLAGS -mmacosx-version-min=$OSX_MIN"
     INSTALL_VER=$VER
     ;;
 *_NT-*)
@@ -67,7 +71,7 @@ INSTALL="$RD/install"
 
 # OSX lacks a "realpath" bash command
 realpath() {
-    [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
+    [[ "$1" == /* ]] && echo "$1" || echo "$PWD/${1#./}"
 }
 
 SCRIPT_FILE=$(realpath "$0")
@@ -83,31 +87,40 @@ cd $RD
 # clone prebuilt gcc
 case "$OS" in
 linux)
-    GCC_DIR=$RD/gcc
-    GCC_LIB=$GCC_DIR/lib/gcc/x86_64-linux/4.8 # crtbegin.o and libgcc.a
-    GCC_LIB2=$GCC_DIR/x86_64-linux/lib64 # libgcc_s.so
-
     # can't get prebuilt clang working so we're using host clang-3.5 https://b/22748915
+    #CLANG_DIR=$RD/clang
+    #git clone $UPSTREAM/clang/linux-x86/host/3.6 $CLANG_DIR
+    #export CC="$CLANG_DIR/bin/clang"
+    #export CXX="$CC++"
     export CC=clang-3.5
     export CXX=clang++-3.5
-    export CFLAGS="$CFLAGS -fuse-ld=gold --sysroot $GCC_DIR/sysroot -B$GCC_LIB"
-    export CXXFLAGS="$CFLAGS -Ix86_64-linux/include/c++/4.8 -Ix86_64-linux/include/x86_64-linux/c++/4.8"
-    export LDFLAGS="$LDFLAGS -m64 --sysroot $GCC_DIR/sysroot -L$GCC_LIB -L$GCC_LIB2"
-    # lldb uses at least one function from glibc2.12
-    git clone sso://googleplex-android/platform/prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.15-4.8 $GCC_DIR
+
+    GCC_DIR=$RD/gcc
+    git clone $UPSTREAM/gcc/linux-x86/host/x86_64-linux-glibc2.15-4.8 $GCC_DIR
+
+    find "$GCC_DIR" -name x86_64-linux -exec ln -fns {} {}-gnu \;
+
+    FLAGS+=(-fuse-ld=gold)
+    FLAGS+=(--gcc-toolchain="$GCC_DIR")
+    FLAGS+=(--sysroot "$GCC_DIR/sysroot")
+    FLAGS+=(-B"$GCC_DIR/bin/x86_64-linux-")
+    export CFLAGS="$CFLAGS ${FLAGS[*]}"
+    export CXXFLAGS="$CXXFLAGS ${FLAGS[*]}"
+    export LDFLAGS="$LDFLAGS -m64"
     ;;
 esac
 
 commit_and_push()
 {
+    BRANCH=studio-master-dev
     # check into a local git clone
     rm -rf $SCRATCH/prebuilts/$PROJ/
     mkdir -p $SCRATCH/prebuilts/$PROJ/
     cd $SCRATCH/prebuilts/$PROJ/
-    git clone sso://googleplex-android/platform/prebuilts/$PROJ/$OS-x86
+    git clone $UPSTREAM/$PROJ/$OS-x86 -b $BRANCH
     GIT_REPO="$SCRATCH/prebuilts/$PROJ/$OS-x86"
     cd $GIT_REPO
-    git rm -r * || true  # ignore error caused by empty directory
+    rm -rf *
     mv $INSTALL/* $GIT_REPO
     cp $SCRIPT_FILE $GIT_REPO
     cp $COMMON_FILE $GIT_REPO
@@ -116,7 +129,7 @@ commit_and_push()
     git commit -m "Adding binaries for $INSTALL_VER"
 
     # execute this command to upload
-    #git push origin HEAD:refs/for/master
+    #git push origin HEAD:refs/for/$BRANCH
 
-    rm -rf $RD || true  # ignore error
+    rm -rf $RD
 }
