@@ -1,0 +1,14 @@
+@echo off
+SET originalDir=%cd%
+SET rootDir=%~dp0..
+SET llvmDir=%rootDir%\llvm
+SET lldbDir=%llvmDir%\tools\lldb
+SET clangDir=%llvmDir%\tools\clang
+SET buildDir=%rootDir%\build
+SET pythonHome=C:\Users\lldb_build\ll\prebuilts\python\x86
+SET remoteDir=/data/local/tmp/lldb
+SET toolchain=C:/Toolchains
+SET port=5430
+SET lockDir=c:\tmp\lock\lldbbuild.exclusivelock
+SET gstrace=gs://lldb_test_traces
+SET gsbinaries=gs://lldb_binaries

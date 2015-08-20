@@ -1,0 +1,12 @@
+@echo off
+SET originalDir=%cd%
+SET rootDir=%~dp0..
+SET lldbDir=%rootDir%\lldb
+SET buildDir=%rootDir%\build
+SET pythonHome=C:\Users\lldb_build\ll\prebuilts\python\x86
+SET remoteDir=/data/local/tmp/lldb
+SET toolchain=C:/Toolchains
+SET port=5430
+SET gstrace=gs://lldb_test_traces_asbuild
+SET gs_asbin_linux=gs://lldb_asbuild_binaries/builds/git_studio-1.4-dev-linux-lldb_linux
+SET gs_asbin_windows=gs://lldb_asbuild_binaries/builds/git_studio-1.4-dev-windows-lldb_windows
