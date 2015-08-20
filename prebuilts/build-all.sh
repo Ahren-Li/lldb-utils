@@ -4,3 +4,5 @@
 ./build-swig.sh
 ./build-cmake.sh
 ./build-ninja.sh
+./build-glog.sh
+./build-protobuf.sh
