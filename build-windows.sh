@@ -89,10 +89,22 @@ PATH="$(cygpath -up 'C:\Windows\system32')" "${CMD[@]}"
 mkdir -p "$INSTALL/host/bin" "$INSTALL/host/lib" "$INSTALL/host/include/lldb"
 cp -a "$BUILD/bin/"{lldb.exe,liblldb.dll}         "$INSTALL/host/bin/"
 cp -a "$PRE/python/windows-x86/x86/python27.dll"  "$INSTALL/host/bin/"
-cp -a "$BUILD/lib/"{liblldb.lib,site-packages}    "$INSTALL/host/lib/"
+cp -a "$BUILD/lib/liblldb.lib"                    "$INSTALL/host/lib/"
+cp -a "$PRE/python/windows-x86/x86/Lib/"*         "$INSTALL/host/lib/"
+cp -a "$BUILD/lib/site-packages"                  "$INSTALL/host/lib/"
 cp -a "$LLDB/include/lldb/"{API,Utility,lldb-*.h} "$INSTALL/host/include/lldb/"
 
 find "$INSTALL/host/include/lldb" -name 'lldb-private*.h' -exec rm {} +
+
+unset PRUNE
+PRUNE+=(-name '*.pyc')
+PRUNE+=(-or -name 'plat-*')
+PRUNE+=(-or -name 'distutils')
+PRUNE+=(-or -name 'idlelib')
+PRUNE+=(-or -name 'lib2to3')
+PRUNE+=(-or -name 'test')
+PRUNE+=(-or -name 'unittest')
+find "$INSTALL/host/lib/" '(' "${PRUNE[@]}" ')' -prune -exec rm -r {} +
 
 mkdir -p "$DEST"
 (cd "$INSTALL/host" && zip -r "$DEST/lldb-windows-${BNUM}.zip" .)

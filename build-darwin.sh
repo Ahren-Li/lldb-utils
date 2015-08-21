@@ -81,6 +81,7 @@ cp -a "$LLDB/include/lldb/"{API,Utility,lldb-*.h} "$INSTALL/host/include/lldb/"
 
 find "$INSTALL/host/include/lldb" -name 'lldb-private*.h' -exec rm {} +
 
+unset PRUNE
 PRUNE+=('(' -name Clang -and -type d ')')
 PRUNE+=( -or -name argdumper)
 PRUNE+=( -or -name darwin-debug)

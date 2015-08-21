@@ -113,14 +113,28 @@ CMAKE_OPTIONS+=(-DCMAKE_INSTALL_PREFIX="$INSTALL/host")
 #"$NINJA" -C "$BUILD" install
 
 mkdir -p "$INSTALL/host/bin" "$INSTALL/host/lib" "$INSTALL/host/include/lldb"
-cp -a "$BUILD/bin/"lldb*                               "$INSTALL/host/bin/"
-cp -a "$BUILD/lib/"{liblldb.so*,python2.7,readline.so} "$INSTALL/host/lib/"
-cp -a "$PRE/libedit/linux-x86/lib/"libedit.so*         "$INSTALL/host/lib/"
-cp -a "$PRE/python/linux-x86/lib/"libpython2.7.so*     "$INSTALL/host/lib/"
-cp -a "$TOOLCHAIN/sysroot/usr/lib/"libtinfo.so*        "$INSTALL/host/lib/"
-cp -a "$LLDB/include/lldb/"{API,Utility,lldb-*.h}      "$INSTALL/host/include/lldb/"
+cp -a "$BUILD/bin/"lldb*                           "$INSTALL/host/bin/"
+cp -a "$BUILD/lib/"{liblldb.so*,readline.so}       "$INSTALL/host/lib/"
+cp -a "$PRE/libedit/linux-x86/lib/"libedit.so*     "$INSTALL/host/lib/"
+cp -a "$PRE/python/linux-x86/lib/"libpython2.7.so* "$INSTALL/host/lib/"
+cp -a "$TOOLCHAIN/sysroot/usr/lib/"libtinfo.so*    "$INSTALL/host/lib/"
+cp -a "$PRE/python/linux-x86/lib/python2.7"        "$INSTALL/host/lib/"
+cp -a "$BUILD/lib/python2.7/site-packages"         "$INSTALL/host/lib/python2.7"
+cp -a "$LLDB/include/lldb/"{API,Utility,lldb-*.h}  "$INSTALL/host/include/lldb/"
 
 find "$INSTALL/host/include/lldb" -name 'lldb-private*.h' -exec rm {} +
+
+unset PRUNE
+PRUNE+=(-name '*.pyc')
+PRUNE+=(-or -name '*.pyo')
+PRUNE+=(-or -name 'plat-*')
+PRUNE+=(-or -name 'config')
+PRUNE+=(-or -name 'distutils')
+PRUNE+=(-or -name 'idlelib')
+PRUNE+=(-or -name 'lib2to3')
+PRUNE+=(-or -name 'test')
+PRUNE+=(-or -name 'unittest')
+find "$INSTALL/host/lib/python2.7" '(' "${PRUNE[@]}" ')' -prune -exec rm -r {} +
 
 #########################
 ##### Android build #####
