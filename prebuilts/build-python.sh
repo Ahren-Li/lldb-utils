@@ -40,5 +40,7 @@ linux|darwin)
 	;;
 esac
 
+find $INSTALL '(' -name '*.pyc' -or -name '*.pyo' ')' -exec rm {} +
+
 commit_and_push
 
