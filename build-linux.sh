@@ -8,9 +8,16 @@
 set -e
 
 if [ ! "${BASH_SOURCE[1]}" ]; then
-	ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-	source "$ROOT_DIR/external/lldb-utils/build.sh" "$@"
-	exit
+	case "$(uname -s)" in
+		Linux)
+			ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+			source "$ROOT_DIR/external/lldb-utils/build.sh" "$@"
+			exit 0
+			;;
+		*)
+			echo "No." > /dev/stderr
+			exit 1
+	esac
 fi
 
 export PATH="/usr/bin:/bin"
