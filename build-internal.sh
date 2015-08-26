@@ -4,15 +4,14 @@
 # $2 = dest_dir
 # $3 = build_number
 
-case "$(uname -s)" in
-	Linux)  OS=linux;;
-	Darwin) OS=darwin;;
-	*_NT-*) OS=windows;;
-esac
+# exit on error
+set -e
 
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-source "$DIR/build-${OS}.sh" "$@"
+# calculate the root directory from the script path
+# this script lives two directories down from the root
+# external/lldb-utils/build-internal.sh
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+source "$ROOT_DIR/external/lldb-utils/build.sh" "$@"
 
 GOOGLE="$ROOT_DIR/tools/vendor/google"
 FRONTEND="$GOOGLE/android-ndk/native/LLDBProtobufFrontend"
@@ -24,56 +23,67 @@ rm -rf "$BUILD"
 mkdir -p "$BUILD"
 
 unset LLDB_FLAGS
+unset LLDB_LINKER_FLAGS
 unset CMAKE_OPTIONS
+
+CMAKE_OPTIONS+=(-GNinja)
+CMAKE_OPTIONS+=(-DCMAKE_BUILD_TYPE=$CONFIG)
 
 case $OS in
 	linux)
-		CLANG="$PRE/clang/linux-x86/host/3.6/bin/clang"
-		TOOLCHAIN="$PRE/gcc/linux-x86/host/x86_64-linux-glibc2.15-4.8"
+		CC="$PREBUILTS/clang/linux-x86/host/3.6/bin/clang"
+		TOOLCHAIN="$PREBUILTS/gcc/linux-x86/host/x86_64-linux-glibc2.15-4.8"
 
 		LLDB_FLAGS+=(-target x86_64-unknown-linux)
 		LLDB_FLAGS+=(--gcc-toolchain="$TOOLCHAIN")
 		LLDB_FLAGS+=(-B"$TOOLCHAIN/bin/x86_64-linux-")
 
 		CMAKE_OPTIONS+=(-DCMAKE_SYSROOT="$TOOLCHAIN/sysroot")
-		CMAKE_OPTIONS+=(-DCMAKE_C_COMPILER="$CLANG")
-		CMAKE_OPTIONS+=(-DCMAKE_CXX_COMPILER="$CLANG++")
+		CMAKE_OPTIONS+=(-DCMAKE_C_COMPILER="$CC")
+		CMAKE_OPTIONS+=(-DCMAKE_CXX_COMPILER="$CC++")
 		CMAKE_OPTIONS+=(-DCMAKE_C_FLAGS="${LLDB_FLAGS[*]}")
 		CMAKE_OPTIONS+=(-DCMAKE_CXX_FLAGS="${LLDB_FLAGS[*]}")
+
+		CMAKE_OPTIONS+=("$FRONTEND")
+		CMAKE_OPTIONS+=(-DCMAKE_MAKE_PROGRAM="$NINJA")
+		CMAKE_OPTIONS+=(-DLIBLLDB_DIR="$INSTALL/host/lib")
+		CMAKE_OPTIONS+=(-DCMAKE_INSTALL_PREFIX="$INSTALL/frontend")
 		;;
 	darwin)
 		LLDB_FLAGS+=(-stdlib=libc++)
 		LLDB_FLAGS+=(-mmacosx-version-min=10.8)
 
+		LLDB_LINKER_FLAGS+=(-mmacosx-version-min=10.8)
+
 		CMAKE_OPTIONS+=(-DCMAKE_C_COMPILER=clang)
 		CMAKE_OPTIONS+=(-DCMAKE_CXX_COMPILER=clang++)
 		CMAKE_OPTIONS+=(-DCMAKE_C_FLAGS="${LLDB_FLAGS[*]}")
 		CMAKE_OPTIONS+=(-DCMAKE_CXX_FLAGS="${LLDB_FLAGS[*]}")
+		CMAKE_OPTIONS+=(-DCMAKE_EXE_LINKER_FLAGS="${LLDB_LINKER_FLAGS[*]}")
+		CMAKE_OPTIONS+=(-DCMAKE_MODULE_LINKER_FLAGS="${LLDB_LINKER_FLAGS[*]}")
+		CMAKE_OPTIONS+=(-DCMAKE_SHARED_LINKER_FLAGS="${LLDB_LINKER_FLAGS[*]}")
+
+		CMAKE_OPTIONS+=("$FRONTEND")
+		CMAKE_OPTIONS+=(-DCMAKE_MAKE_PROGRAM="$NINJA")
+		CMAKE_OPTIONS+=(-DLIBLLDB_DIR="$INSTALL/host")
+		CMAKE_OPTIONS+=(-DCMAKE_INSTALL_PREFIX="$INSTALL/frontend")
+		;;
+	windows)
+		CMAKE_OPTIONS+=("$(cygpath -w "$FRONTEND")")
+		CMAKE_OPTIONS+=(-DCMAKE_MAKE_PROGRAM="$(cygpath -w "${NINJA}.exe")")
+		CMAKE_OPTIONS+=(-DLIBLLDB_DIR="$(cygpath -w "$INSTALL/host/lib")")
+		CMAKE_OPTIONS+=(-DCMAKE_INSTALL_PREFIX="$(cygpath -w "$INSTALL/frontend")")
 		;;
 esac
-
-NINJA="$PRE/ninja/$OS-x86/ninja"
-CMAKE="$PRE/cmake/$OS-x86/bin/cmake"
-
-case $OS in
-	darwin) CMAKE_OPTIONS+=(-DLIBLLDB_DIR="$INSTALL/host");;
-	*)      CMAKE_OPTIONS+=(-DLIBLLDB_DIR="$INSTALL/host/lib");;
-esac
-
-CMAKE_OPTIONS+=(-GNinja)
-CMAKE_OPTIONS+=("$FRONTEND")
-CMAKE_OPTIONS+=(-DCMAKE_MAKE_PROGRAM="$NINJA")
-CMAKE_OPTIONS+=(-DCMAKE_BUILD_TYPE=$CONFIG)
-CMAKE_OPTIONS+=(-DCMAKE_INSTALL_PREFIX="$INSTALL/frontend")
 
 case $OS in
 	windows)
 		unset CMD
 		CMD+=(cmd /c "${VS120COMNTOOLS}VsDevCmd.bat")
-		CMD+=('&&' cd "$BUILD")
-		CMD+=('&&' "$CMAKE" "${CMAKE_OPTIONS[@]}")
-		CMD+=('&&' "$NINJA" install)
-		PATH="$(cygpath -up 'C:\Windows\system32')" "${CMD[@]}"
+		CMD+=('&&' cd "$(cygpath -w "$BUILD")")
+		CMD+=('&&' "$(cygpath -w "${CMAKE}.exe")" "${CMAKE_OPTIONS[@]}")
+		CMD+=('&&' "$(cygpath -w "${NINJA}.exe")" install)
+		PATH="$(cygpath -u 'C:\Windows\System32')" "${CMD[@]}"
 		;;
 	*)
 		(cd "$BUILD" && "$CMAKE" "${CMAKE_OPTIONS[@]}")
