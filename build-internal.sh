@@ -10,7 +10,9 @@ case "$(uname -s)" in
 	*_NT-*) OS=windows;;
 esac
 
-source build-${OS}.sh "$@"
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+source "$DIR/build-${OS}.sh" "$@"
 
 GOOGLE="$ROOT_DIR/tools/vendor/google"
 FRONTEND="$GOOGLE/android-ndk/native/LLDBProtobufFrontend"
