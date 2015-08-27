@@ -25,6 +25,10 @@ ln -fns ../../clang "$LLVM/tools/clang"
 
 export PATH="$SWIG_DIR/bin:/usr/sbin:/usr/bin:/bin"
 
+# we don't need code signing
+function codesign() { :; }
+export -f codesign
+
 CONFIG=Release
 
 unset XCODEBUILD_OPTIONS
