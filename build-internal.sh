@@ -69,6 +69,19 @@ case $OS in
 		CMAKE_OPTIONS+=(-DCMAKE_INSTALL_PREFIX="$INSTALL/frontend")
 		;;
 	windows)
+		# path too long
+		TMP="$(mktemp -d)"
+		mv "$ROOT_DIR/"{prebuilts,tools} "$TMP/"
+		FRONTEND="$TMP${FRONTEND#"$ROOT_DIR"}"
+
+		function finish() {
+			# move these back
+			mv "$TMP/"{prebuilts,tools} "$ROOT_DIR/"
+			rmdir "$TMP"
+		}
+
+		trap finish EXIT
+
 		CMAKE_OPTIONS+=("$(cygpath -w "$FRONTEND")")
 		CMAKE_OPTIONS+=(-DCMAKE_MAKE_PROGRAM="$(cygpath -w "${NINJA}.exe")")
 		CMAKE_OPTIONS+=(-DLIBLLDB_DIR="$(cygpath -w "$INSTALL/host/lib")")
