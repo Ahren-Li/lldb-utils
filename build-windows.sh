@@ -21,11 +21,19 @@ if [ ! "${BASH_SOURCE[1]}" ]; then
 fi
 
 # path too long
-mkdir -p "$OUT/tmp"
-mv "$LLVM" "$LLDB" "$CLANG" "$OUT/tmp/"
-LLVM="$OUT/tmp/llvm"
-LLDB="$OUT/tmp/lldb"
-CLANG="$OUT/tmp/clang"
+TMP="$(mktemp -d)"
+mv "$LLVM" "$LLDB" "$CLANG" "$TMP/"
+LLVM="$TMP/llvm"
+LLDB="$TMP/lldb"
+CLANG="$TMP/clang"
+
+function finish() {
+	# move these back
+	mv "$LLVM" "$LLDB" "$CLANG" "$ROOT_DIR/external/"
+	rmdir "$TMP"
+}
+
+trap finish EXIT
 
 export SWIG_LIB="$(cygpath -w "$SWIG_LIB")"
 
@@ -76,6 +84,3 @@ PRUNE+=(-or -name 'unittest')
 find "$INSTALL/host/lib/" '(' "${PRUNE[@]}" ')' -prune -exec rm -r {} +
 
 (cd "$INSTALL/host" && zip -r "$DEST/lldb-windows-${BNUM}.zip" .)
-
-# move these back
-mv "$LLVM" "$LLDB" "$CLANG" "$ROOT_DIR/external/"
