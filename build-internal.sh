@@ -70,17 +70,18 @@ case $OS in
 		;;
 	windows)
 		# path too long
-		TMP="$(mktemp -d)"
 		mv "$ROOT_DIR/"{prebuilts,tools} "$TMP/"
+		PREBUILTS="$TMP${PREBUILTS#"$ROOT_DIR"}"
+		NINJA="$PREBUILTS/ninja/${OS}-x86/ninja"
+		CMAKE="$PREBUILTS/cmake/${OS}-x86/bin/cmake"
 		FRONTEND="$TMP${FRONTEND#"$ROOT_DIR"}"
 
 		function finish() {
 			# move these back
+			mv "$LLVM" "$LLDB" "$CLANG" "$ROOT_DIR/external/"
 			mv "$TMP/"{prebuilts,tools} "$ROOT_DIR/"
 			rmdir "$TMP"
 		}
-
-		trap finish EXIT
 
 		CMAKE_OPTIONS+=("$(cygpath -w "$FRONTEND")")
 		CMAKE_OPTIONS+=(-DCMAKE_MAKE_PROGRAM="$(cygpath -w "${NINJA}.exe")")
