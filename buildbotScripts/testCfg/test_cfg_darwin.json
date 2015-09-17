@@ -1,0 +1,5 @@
+{
+    "test1": "emulator-5554,i686-linux-android-gcc,i386",
+    "test7": "015d4b339923ee09,arm-linux-androideabi-gcc,arm",
+    "test8": "local,clang,x86_64"
+}

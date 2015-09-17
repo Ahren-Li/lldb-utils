@@ -1,0 +1,6 @@
+{
+  "test1": "B29CA458,i686-linux-android-gcc,i386,API21",
+  "test2": "04ca8338002e5d42,arm-linux-androideabi-gcc,arm,API22",
+  "test3": "HT4A1JT02945,aarch64-linux-android-gcc,aarch64,API21",
+  "test7": "383541751DDB00EC,arm-linux-androideabi-gcc,arm,API10"
+}

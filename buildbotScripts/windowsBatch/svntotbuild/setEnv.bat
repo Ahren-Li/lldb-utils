@@ -10,5 +10,3 @@ SET remoteDir=/data/local/tmp/lldb
 SET toolchain=C:/Toolchains
 SET port=5430
 SET lockDir=c:\tmp\lock\lldbbuild.exclusivelock
-SET gstrace=gs://lldb_test_traces
-SET gsbinaries=gs://lldb_binaries
