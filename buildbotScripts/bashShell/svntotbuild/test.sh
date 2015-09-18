@@ -1,6 +1,6 @@
 #!/bin/bash -e
 source setEnv.sh
-if [ $1 == local* ]
+if [[ $1 == local* ]];
 then
   source localTest.sh $1
 else

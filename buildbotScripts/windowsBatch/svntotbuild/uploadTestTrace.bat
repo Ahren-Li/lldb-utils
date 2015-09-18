@@ -1,7 +1,7 @@
 @echo off
 
 SET gstrace=gs://lldb_test_traces
-call zip -r build-%1 logs-* || goto :error
+call zip -r build-%1 c:\logs\logs-* || goto :error
 call gsutil cp build-%1.zip %gstrace%/%2/ || goto :error
 call rm build-%1.zip
 call rm -rf c:\logs\logs-*
