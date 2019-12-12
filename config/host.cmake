@@ -12,9 +12,9 @@ set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_LIST_DIR}/${OS}.toolchain.cmake"
 
 # Configure LLVM
 set(LLVM_TARGETS_TO_BUILD "X86;ARM;AArch64;Mips" CACHE STRING "X86, ARM, AArch64, Mips")
-set(LLVM_EXTERNAL_CLANG_SOURCE_DIR "${REPO_ROOT}/external/clang"
+set(LLVM_EXTERNAL_CLANG_SOURCE_DIR "${REPO_ROOT}/external/llvm-project/clang"
   CACHE STRING "Clang source path")
-set(LLVM_EXTERNAL_LLDB_SOURCE_DIR "${REPO_ROOT}/external/lldb"
+set(LLVM_EXTERNAL_LLDB_SOURCE_DIR "${REPO_ROOT}/external/llvm-project/lldb"
   CACHE STRING "LLDB source path")
 
 set(LLDB_DISABLE_CURSES ON CACHE BOOL "Disable curses support")

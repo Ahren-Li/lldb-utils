@@ -16,7 +16,8 @@ if [ ! "$BUILD" ]; then
         source "$LLDB_UTILS/build-common.sh" "$@"
 fi
 
-export ANDROID_NDK_HOME=$PREBUILTS/ndk
+export ANDROID_NDK_HOME=/raid0ssd/lili/20.1.5948944/
+export ANDROID_PLATFORM=android-28
 
 for ARCH in x86 x86_64 armeabi arm64-v8a; do
 

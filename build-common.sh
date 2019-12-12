@@ -41,9 +41,9 @@ cat <<END_INFO
 
 END_INFO
 
-LLVM=$ROOT_DIR/external/llvm
-LLDB=$ROOT_DIR/external/lldb
-CLANG=$ROOT_DIR/external/clang
+LLVM=$ROOT_DIR/external/llvm-project/llvm
+LLDB=$ROOT_DIR/external/llvm-project/lldb
+CLANG=$ROOT_DIR/external/llvm-project/clang
 
 PREBUILTS=$ROOT_DIR/prebuilts
 NINJA_DIR=$PREBUILTS/ninja/$OS-x86
