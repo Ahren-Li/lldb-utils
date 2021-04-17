@@ -29,6 +29,7 @@ cat > "$OUT/commands.bat" <<-EOF
 	set CMAKE=$(cygpath --windows "${CMAKE}.exe")
 	set BUILD=$(cygpath --windows "$BUILD")
 	set INSTALL=$(cygpath --windows "$INSTALL/host")
+	set PATH=C:\Program Files (x86)\Windows Kits\10\bin\\$WINDOWS_SDK_VERSION\x64;%PATH%
 	call "${VS140COMNTOOLS}\\..\\..\\VC\\vcvarsall.bat" amd64
 	"%CMAKE%" $(printf '"%s" ' "${CMAKE_OPTIONS[@]}")
 	"%CMAKE%" --build "%BUILD%" --target lldb
