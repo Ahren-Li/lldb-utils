@@ -2,4 +2,4 @@ set(CLANG "${CMAKE_BINARY_DIR}/../../clang")
 
 set(CMAKE_C_COMPILER "${CLANG}/bin/clang-cl.exe")
 set(CMAKE_CXX_COMPILER "${CMAKE_C_COMPILER}")
-set(CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES "${CLANG}/lib64/clang/5.0/include")
+set(CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES "${CLANG}/lib64/clang/7.0.2/include")
