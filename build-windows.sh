@@ -24,13 +24,14 @@ CMAKE_OPTIONS+=(-C"$(cygpath --windows "$LLDB_UTILS/config/$OS.cmake")")
 CMAKE_OPTIONS+=(-H"$(cygpath --windows "$LLVM")")
 CMAKE_OPTIONS+=(-B"$(cygpath --windows "$BUILD")")
 
+# set PATH=C:\Program Files (x86)\Windows Kits\10\bin\\$WINDOWS_SDK_VERSION\x64;%PATH%
+
 cat > "$OUT/commands.bat" <<-EOF
 	set PATH=C:\\Windows\\System32
 	set CMAKE=$(cygpath --windows "${CMAKE}.exe")
 	set BUILD=$(cygpath --windows "$BUILD")
 	set INSTALL=$(cygpath --windows "$INSTALL/host")
-	set PATH=C:\Program Files (x86)\Windows Kits\10\bin\\$WINDOWS_SDK_VERSION\x64;%PATH%
-	call "${VS140COMNTOOLS}\\..\\..\\VC\\vcvarsall.bat" amd64
+	call "${VS141COMNTOOLS}\\vcvarsx86_amd64.bat"
 	"%CMAKE%" $(printf '"%s" ' "${CMAKE_OPTIONS[@]}")
 	"%CMAKE%" --build "%BUILD%" --target lldb
 	"%CMAKE%" --build "%BUILD%" --target llvm-symbolizer
